@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-service
+  template:
+    metadata:
+      labels:
+        app: music-service
+    spec:
+      containers:
+        - name: music-service
+          image: musefys6/music-service:0.0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8087
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          resources:
+            requests:
+              memory: "128Mi"  # Lower memory request
+              cpu: "0.1"       # Lower CPU request
+            limits:
+              memory: "256Mi"  # Lower memory limit
+              cpu: "0.3"       # Lower CPU limit
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: music-service
+spec:
+  selector:
+    app: music-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8087
+  type: ClusterIP

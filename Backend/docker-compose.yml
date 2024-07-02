@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  zipkin-server:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - musefy-network
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+
+  discovery-server:
+    image: musefys6/discovery-server:latest
+    container_name: discovery-server
+    ports:
+      - 8761:8761
+    networks:
+      - musefy-network
+    environment:
+      - SPRING.ZIPKIN.BASEURL = http://zipkin-server:9411/
+      - SPRING_PROFILES_ACTIVE=docker
+
+  api-gateway:
+    image: musefys6/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - 8085:8085
+    depends_on:
+      - discovery-server
+    networks:
+      - musefy-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING.ZIPKIN.BASEURL = http://zipkin-server:9411/
+
+  music-service:
+    image: musefys6/music-service:latest
+    container_name: music-service
+    ports:
+      - 8081:8081
+    depends_on:
+      # - discovery-server
+      # - api-gateway
+      - mariadb
+    networks:
+      - musefy-network
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_DATA_MONGODB_HOST=users
+      - SPRING.ZIPKIN.BASEURL = http://zipkin-server:9411/
+    
+
+  user-service:
+    image: musefys6/user-service:latest
+    container_name: user-service
+    ports:
+      - 8083:8083
+    depends_on:
+      # - discovery-server
+      # - api-gateway
+      - mongodb
+    networks:
+      - musefy-network
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mariadb:3306/music
+      - SPRING_DATASOURCE_USERNAME=music-service
+      - SPRING_DATASOURCE_PASSWORD=musefy_music_service
+      - SPRING.ZIPKIN.BASEURL = http://zipkin-server:9411/
+
+networks:
+  musefy-network:
