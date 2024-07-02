@@ -1,9 +1,0 @@
-pydantic==1.10.8
-numpy~=1.24.3
-pandas~=2.0.2
-scikit-learn~=1.2.2
-fastapi~=0.95.2
-aio-pika
-pika~=1.3.2
-uvicorn~=0.22.0
-pytest==7.3.1
