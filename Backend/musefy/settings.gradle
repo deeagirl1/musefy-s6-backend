@@ -1,0 +1,6 @@
+rootProject.name = 'musefy'
+include 'music-service'
+include 'user-service'
+include 'security-service'
+include 'api-gateway'
+include 'discovery-server'

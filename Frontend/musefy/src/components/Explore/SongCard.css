@@ -1,0 +1,25 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 0%; /* Adjust the card height as desired */
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .media {
+    position: relative;
+    padding-top: 0;
+    overflow: hidden;
+    background-color: #f1f1f1; /* Set a background color as fallback */
+  }
+  
+  .media img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  

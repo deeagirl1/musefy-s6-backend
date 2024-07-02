@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-resource-api-gateway
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - host: 34.147.0.194  # replace with your domain or public IP
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/api/*"
+        backend:
+          service:
+            name: "gateway"  # replace with your api-gateway service name
+            port:
+              number: 8085  # replace with your service port number
